@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unicode to Preeti Converter</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8fafc; margin: 0; padding: 20px; }
+    .container { max-width: 1100px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #1e40af; }
+    textarea { width: 100%; height: 200px; padding: 15px; font-size: 17px; border: 2px solid #3b82f6; border-radius: 8px; }
+    button { padding: 12px 30px; margin: 8px; font-size: 16px; border: none; border-radius: 6px; cursor: pointer; }
+    .convert { background: #2563eb; color: white; }
+    .clear { background: #64748b; color: white; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔄 Unicode to Preeti Converter</h1>
+
+    <div style="display:flex; gap:20px; flex-wrap:wrap;">
+      <div style="flex:1; min-width:300px;">
+        <h3>Unicode Input</h3>
+        <textarea id="unicode" placeholder="यहाँ Unicode लेख्नुहोस्..."></textarea>
+      </div>
+      <div style="flex:1; min-width:300px;">
+        <h3>Preeti Output</h3>
+        <textarea id="preeti" placeholder="Preeti मा रूपान्तरण..."></textarea>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin:20px;">
+      <button class="convert" onclick="convertToPreeti()">Unicode → Preeti</button>
+      <button class="clear" onclick="clearAll()">Clear</button>
+    </div>
+  </div>
+
+  <script>
+    const map = {"अ":"c","आ":"cf","इ":"O","ई":"P","उ":"p","ऊ":"pm","ए":"]","ऐ":"}","ओ":"]","औ":"}","क":"s","ख":"v","ग":"u","घ":"3","ङ":"5","च":"8","छ":"9","ज":"r","झ":"4","ञ":"6","ट":"t","ठ":"T","ड":"b","ढ":"B","ण":"6","त":"t","थ":"T","द":"d","ध":"D","न":"n","प":"k","फ":"K","ब":"g","भ":"a","म":"m","य":"o","र":"/","ल":"l","व":"j","श":"z","ष":"Z","स":"s","ह":"x","क्ष":"km","त्र":"/t","ज्ञ":"1","ा":"f","ि":"l","ी":"L","ु":"'","ू":"\"","ृ":"`","े":"]","ै":"}","ो":"}","ौ":"}","ं":"M","ँ":"~","्":"\\","।":"."," ":" ","\n":"\n"};
+
+    function toPreeti(text) {
+      let result = "";
+      let i = 0;
+      while (i < text.length) {
+        let ch = text[i], n1 = text[i+1] || '', n2 = text[i+2] || '';
+        if (n1 === 'ि') { result += 'l' + (map[ch] || ch); i += 2; continue; }
+        if (ch === 'र' && n1 === '्') { result += "/"; i += 2; continue; }
+        if (n1 === '्' && n2) {
+          result += (map[ch + '्' + n2] || (map[ch] || ch) + "\\");
+          i += 3; continue;
+        }
+        result += map[ch] || ch;
+        i++;
+      }
+      return result.replace(/l([a-zA-Z])/g, '$1l');
+    }
+
+    function convertToPreeti() {
+      document.getElementById("preeti").value = toPreeti(document.getElementById("unicode").value);
+    }
+
+    function clearAll() {
+      document.getElementById("unicode").value = "";
+      document.getElementById("preeti").value = "";
+    }
+  </script>
+</body>
+</html>
