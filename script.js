@@ -29,7 +29,7 @@ function convertToPreeti(text) {
         const next1 = text[i + 1] || '';
         const next2 = text[i + 2] || '';
 
-        // Handle ि matra (very important)
+        // Handle ि matra
         if (next1 === 'ि') {
             result += 'l' + (unicodeToPreeti[ch] || ch);
             i += 2;
@@ -65,23 +65,29 @@ function convertToPreeti(text) {
         i++;
     }
 
-    // Final fixes
     return result
         .replace(/l([a-zA-Z])/g, '$1l')   // fix i-matra position
         .replace(/\\\\/g, '\\');
 }
 
-// UI Wrapper Function to handle the conversion from textareas
-function convertToPreetiUI() {
-    const input = document.getElementById("unicode").value;
-    document.getElementById("preeti").value = convertToPreeti(input);
-}
+// Wait for DOM to load, then safely attach events
+document.addEventListener("DOMContentLoaded", function() {
+    const convertBtn = document.getElementById("convertBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const unicodeTextArea = document.getElementById("unicode");
+    const preetiTextArea = document.getElementById("preeti");
 
-function clearAll() {
-    document.getElementById("unicode").value = "";
-    document.getElementById("preeti").value = "";
-}
+    if (convertBtn) {
+        convertBtn.addEventListener("click", function() {
+            const input = unicodeTextArea.value;
+            preetiTextArea.value = convertToPreeti(input);
+        });
+    }
 
-// MOVE TO BOTTOM: Make functions globally available for onclick
-window.convertToPreeti = convertToPreetiUI; // Maps HTML button to UI function
-window.clearAll = clearAll;
+    if (clearBtn) {
+        clearBtn.addEventListener("click", function() {
+            unicodeTextArea.value = "";
+            preetiTextArea.value = "";
+        });
+    }
+});
