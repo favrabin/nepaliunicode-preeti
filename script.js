@@ -1,6 +1,10 @@
 // script.js - Better Unicode to Preeti Converter
 
+// Make functions globally available for onclick
+window.convertToPreeti = convertToPreeti;
+window.clearAll = clearAll;
 const unicodeToPreeti = {
+    
     "अ": "c", "आ": "cf", "इ": "O", "ई": "P", "उ": "p", "ऊ": "pm",
     "ए": "]", "ऐ": "}", "ओ": "]", "औ": "}",
     "क": "s", "ख": "v", "ग": "u", "घ": "3", "ङ": "5",
@@ -80,6 +84,4 @@ function clearAll() {
     document.getElementById("unicode").value = "";
     document.getElementById("preeti").value = "";
 }
-// Make functions globally available for onclick
-window.convertToPreeti = convertToPreeti;
-window.clearAll = clearAll;
+
