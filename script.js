@@ -80,3 +80,6 @@ function clearAll() {
     document.getElementById("unicode").value = "";
     document.getElementById("preeti").value = "";
 }
+// Make functions globally available for onclick
+window.convertToPreeti = convertToPreeti;
+window.clearAll = clearAll;
