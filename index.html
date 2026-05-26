@@ -35,7 +35,7 @@
     </div>
   </div>
 <script>
-// ==================== IMPROVED UNICODE TO PREETI (Better Accuracy) ====================
+// ==================== FINAL IMPROVED VERSION ====================
 
 const map = {
   "अ":"c","आ":"cf","इ":"O","ई":"P","उ":"p","ऊ":"pm","ए":"]","ऐ":"}","ओ":"]","औ":"}",
@@ -43,63 +43,39 @@ const map = {
   "ट":"t","ठ":"T","ड":"b","ढ":"B","ण":"6","त":"t","थ":"T","द":"d","ध":"D","न":"n",
   "प":"k","फ":"K","ब":"g","भ":"a","म":"m","य":"o","र":"/","ल":"l","व":"j","श":"z",
   "ष":"Z","स":"s","ह":"x","क्ष":"km","त्र":"/t","ज्ञ":"1",
-
-  // Matras
   "ा":"f","ि":"l","ी":"L","ु":"'","ू":"\"","ृ":"`","े":"]","ै":"}","ो":"}","ौ":"}",
-
-  // Special
   "ं":"M","ँ":"~","्":"\\","।":"."," ":" ","\n":"\n"
 };
 
 function toPreeti(text) {
   let result = "";
   let i = 0;
-
   while (i < text.length) {
     let ch = text[i];
     let n1 = text[i+1] || '';
     let n2 = text[i+2] || '';
-    let n3 = text[i+3] || '';
 
-    // ि matra
     if (n1 === 'ि') {
       result += 'l' + (map[ch] || ch);
       i += 2; continue;
     }
-
-    // Reph
     if (ch === 'र' && n1 === '्') {
       result += "/"; i += 2; continue;
     }
-
-    // Common Conjuncts
-    if (n1 === '्') {
-      let conj2 = ch + n1 + n2;
-      if (conj2 === "म्प") { result += "mk"; i += 3; continue; }
-      if (conj2 === "र्ण") { result += "6m"; i += 3; continue; }
-      if (conj2 === "ठो") { result += "To"; i += 3; continue; }
-      if (conj2 === "डि") { result += "bi"; i += 3; continue; }
-      if (conj2 === "यो") { result += "oM"; i += 3; continue; }
-      if (conj2 === "हाँ") { result += "xM"; i += 3; continue; }
-      if (conj2 === "स्व") { result += "sj"; i += 3; continue; }
-
+    if (n1 === '्' && n2) {
+      let conj = ch + '्' + n2;
+      if (conj === "म्प") { result += "mk"; i += 3; continue; }
+      if (conj === "र्ण") { result += "6m"; i += 3; continue; }
+      if (conj === "ठो") { result += "To"; i += 3; continue; }
+      if (conj === "डि") { result += "bi"; i += 3; continue; }
+      if (conj === "यो") { result += "oM"; i += 3; continue; }
       result += (map[ch] || ch) + "\\";
       i += 2; continue;
     }
-
     result += map[ch] || ch;
     i++;
   }
-
-  // Final corrections
-  result = result
-    .replace(/l([a-zA-Z])/g, '$1l')
-    .replace(/mk/g, 'mk')
-    .replace(/6m/g, '6m')
-    .replace(/To/g, 'To')
-    .replace(/oM/g, 'oM');
-
-  return result;
+  return result.replace(/l([a-zA-Z])/g, '$1l');
 }
 
 function convertToPreeti() {
@@ -112,5 +88,4 @@ function clearAll() {
   document.getElementById("preeti").value = "";
 }
 </script>
-</body>
 </html>
