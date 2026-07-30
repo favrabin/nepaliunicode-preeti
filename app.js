@@ -1,4 +1,4 @@
-// Unicode to Preeti Accurate Character Dictionary
+// Reliable Unicode to Preeti Mapping Engine
 const unicodeToPreetiMap = {
   // Digits
   '०': '0', '१': '1', '२': '2', '३': '3', '४': '4',
@@ -17,14 +17,14 @@ const unicodeToPreetiMap = {
   'य': 'o', 'र': 'r', 'ल': 'l', 'व': 'j', 'श': 'z',
   'ष': 'Z', 'स': 's', 'ह': 'x',
 
-  // Half-Letters (Preeti Special Keys)
+  // Half Consonants (Preeti Keys)
   'क्': 'S', 'ख्': 'V', 'ग्': 'U', 'घ्': 'ª',
   'च्': 'R', 'छ्': 'R', 'ज्': 'H', 'झ्': '¥',
   'त्': 't', 'थ्': 'T', 'द्': 'b', 'ध्': 'B', 'न्': 'n',
   'प्': 'K', 'फ्': 'K', 'ब्': 'A', 'भ्': 'A', 'म्': 'E',
   'य्': 'O', 'ल्': 'L', 'व्': 'J', 'श्': 'Z', 'स्': ':', 'ह्': 'X',
 
-  // Complex Ligatures
+  // Special Compounds
   'क्ष': 'IF', 'क्ष्म': 'IFe', 'त्र': 'q', 'ज्ञ': 'j', 
   'द्व': 'å', 'द्य': 'B', 'द्ध': '4', 'ष्ट': 'î', 'ष्ठ': 'ï',
   'श्र': 'z', 'स्र': ':r', 'द्द': 'b',
@@ -34,23 +34,24 @@ const unicodeToPreetiMap = {
   'ै': '}', 'ो': 'f]', 'ौ': 'f\}', 'ं': 'm', 'ँ': 'F',
   'ः': ':', '्': '\\',
 
-  // Punctuation
+  // Symbols
   '।': 'P', '॥': 'PP', '?': '?'
 };
 
-// Core Transliteration Engine
+// Transliteration Engine using Safe Codepoints
 function convertUnicodeToPreeti(text) {
   if (!text) return "";
 
   let result = text;
 
-  // Rule 1: Handle Reph (र्) positioning
-  result = result.replace(/र्([क-ह])/g, '$1{');
-  result = result.replace(/र्([क-ह])([ािीुूेैोौँं]*)/g, '$1$2{');
+  // Safe Devanagari range matching using hex codepoints (\u0905 to \u0939)
+  // Rule 1: Reph (र्) shifting
+  result = result.replace(/\u0930\u094d([\u0905-\u0939])/g, '$1{');
+  result = result.replace(/\u0930\u094d([\u0905-\u0939])([\u093e-\u094c\u0901\u0902]*)/g, '$1$2{');
 
   // Rule 2: Short 'i' matra (ि) reordering
-  result = result.replace(/([क-ह])ि/g, 'i$1');
-  result = result.replace(/([क्-ह्][क-ह])ि/g, 'i$1');
+  result = result.replace(/([\u0905-\u0939])\u093f/g, 'i$1');
+  result = result.replace(/([\u0905-\u0939]\u094d[\u0905-\u0939])\u093f/g, 'i$1');
 
   // Rule 3: Specific half-letter shortcuts
   result = result.replace(/स्/g, ':');
@@ -88,7 +89,7 @@ function convertUnicodeToPreeti(text) {
   return converted;
 }
 
-// Global functions accessible by HTML onclick handlers
+// Global functions exposed to window
 window.convertNow = function() {
   const input = document.getElementById('unicodeInput');
   const output = document.getElementById('preetiOutput');
@@ -167,7 +168,7 @@ function showToast(msg) {
   setTimeout(() => { toast.classList.remove("show"); }, 2500);
 }
 
-// Event Listeners for Live Input and Theme Switching
+// Bind event listeners safely
 document.addEventListener("DOMContentLoaded", function() {
   const input = document.getElementById('unicodeInput');
   const themeToggle = document.getElementById('themeToggle');
@@ -184,7 +185,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  // Restore Theme Preference
   if (localStorage.getItem("theme") === "dark") {
     document.documentElement.classList.add("dark");
   }
