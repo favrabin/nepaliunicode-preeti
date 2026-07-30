@@ -1,10 +1,10 @@
-// Unicode to Preeti Master Dictionary
+// Unicode to Preeti Accurate Character Dictionary
 const unicodeToPreetiMap = {
-  // Numbers
+  // Digits
   '०': '0', '१': '1', '२': '2', '३': '3', '४': '4',
   '५': '5', '६': '6', '७': '7', '८': '8', '९': '9',
 
-  // Standalone Vowels
+  // Independent Vowels
   'अ': 'a', 'आ': 'cf', 'इ': 'O', 'ई': 'P', 'उ': 'p', 'ऊ': 'P',
   'ऋ': 'C', 'ए': 'P', 'ऐ': 'P}', 'ओ': 'cf]', 'औ': 'cf\}',
 
@@ -17,19 +17,19 @@ const unicodeToPreetiMap = {
   'य': 'o', 'र': 'r', 'ल': 'l', 'व': 'j', 'श': 'z',
   'ष': 'Z', 'स': 's', 'ह': 'x',
 
-  // Half Consonants (Preeti ASCII specific)
+  // Half-Letters (Preeti Special Keys)
   'क्': 'S', 'ख्': 'V', 'ग्': 'U', 'घ्': 'ª',
   'च्': 'R', 'छ्': 'R', 'ज्': 'H', 'झ्': '¥',
   'त्': 't', 'थ्': 'T', 'द्': 'b', 'ध्': 'B', 'न्': 'n',
   'प्': 'K', 'फ्': 'K', 'ब्': 'A', 'भ्': 'A', 'म्': 'E',
   'य्': 'O', 'ल्': 'L', 'व्': 'J', 'श्': 'Z', 'स्': ':', 'ह्': 'X',
 
-  // Compounds & Special Characters
+  // Complex Ligatures
   'क्ष': 'IF', 'क्ष्म': 'IFe', 'त्र': 'q', 'ज्ञ': 'j', 
   'द्व': 'å', 'द्य': 'B', 'द्ध': '4', 'ष्ट': 'î', 'ष्ठ': 'ï',
   'श्र': 'z', 'स्र': ':r', 'द्द': 'b',
 
-  // Matras (Vowel Signs)
+  // Matras
   'ा': 'f', 'ी': 'L', 'ु': '\'', 'ू': '"', 'े': ']',
   'ै': '}', 'ो': 'f]', 'ौ': 'f\}', 'ं': 'm', 'ँ': 'F',
   'ः': ':', '्': '\\',
@@ -38,21 +38,21 @@ const unicodeToPreetiMap = {
   '।': 'P', '॥': 'PP', '?': '?'
 };
 
-// Conversion Algorithm
+// Core Transliteration Engine
 function convertUnicodeToPreeti(text) {
   if (!text) return "";
 
   let result = text;
 
-  // Rule 1: Reph (र्) shifting
+  // Rule 1: Handle Reph (र्) positioning
   result = result.replace(/र्([क-ह])/g, '$1{');
   result = result.replace(/र्([क-ह])([ािीुूेैोौँं]*)/g, '$1$2{');
 
-  // Rule 2: Short 'i' matra positioning
+  // Rule 2: Short 'i' matra (ि) reordering
   result = result.replace(/([क-ह])ि/g, 'i$1');
   result = result.replace(/([क्-ह्][क-ह])ि/g, 'i$1');
 
-  // Rule 3: Common half-letter replacements
+  // Rule 3: Specific half-letter shortcuts
   result = result.replace(/स्/g, ':');
   result = result.replace(/क्/g, 'S');
   result = result.replace(/न्/g, 'n');
@@ -88,7 +88,7 @@ function convertUnicodeToPreeti(text) {
   return converted;
 }
 
-// Global Actions triggered by buttons
+// Global functions accessible by HTML onclick handlers
 window.convertNow = function() {
   const input = document.getElementById('unicodeInput');
   const output = document.getElementById('preetiOutput');
@@ -119,7 +119,7 @@ window.changeFontSize = function(delta) {
   const output = document.getElementById('preetiOutput');
   [input, output].forEach(el => {
     if (el) {
-      const currentSize = parseFloat(window.getComputedStyle(el).fontSize);
+      const currentSize = parseFloat(window.getComputedStyle(el).fontSize) || 16;
       el.style.fontSize = Math.max(12, Math.min(32, currentSize + delta)) + 'px';
     }
   });
@@ -127,18 +127,27 @@ window.changeFontSize = function(delta) {
 
 window.copyToClipboard = function() {
   const output = document.getElementById('preetiOutput');
-  if (!output || !output.value) return;
-  navigator.clipboard.writeText(output.value).then(() => alert("Preeti text copied!"));
+  if (!output || !output.value) {
+    showToast("Nothing to copy!");
+    return;
+  }
+  navigator.clipboard.writeText(output.value).then(() => {
+    showToast("Preeti text copied!");
+  });
 };
 
 window.downloadTxt = function() {
   const output = document.getElementById('preetiOutput');
-  if (!output || !output.value.trim()) return;
+  if (!output || !output.value.trim()) {
+    showToast("Nothing to download!");
+    return;
+  }
   const blob = new Blob([output.value], { type: "text/plain;charset=utf-8" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = "preeti-converted.txt";
   link.click();
+  showToast("Downloaded .txt file!");
 };
 
 window.clearAll = function() {
@@ -147,9 +156,18 @@ window.clearAll = function() {
   if (input) input.value = "";
   if (output) output.value = "";
   updateStats();
+  if (input) input.focus();
 };
 
-// Event Listeners for real-time conversion & theme toggle
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  if (!toast) return;
+  toast.innerText = msg;
+  toast.classList.add("show");
+  setTimeout(() => { toast.classList.remove("show"); }, 2500);
+}
+
+// Event Listeners for Live Input and Theme Switching
 document.addEventListener("DOMContentLoaded", function() {
   const input = document.getElementById('unicodeInput');
   const themeToggle = document.getElementById('themeToggle');
@@ -161,6 +179,13 @@ document.addEventListener("DOMContentLoaded", function() {
   if (themeToggle) {
     themeToggle.addEventListener("click", function() {
       document.documentElement.classList.toggle("dark");
+      const isDark = document.documentElement.classList.contains("dark");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
     });
+  }
+
+  // Restore Theme Preference
+  if (localStorage.getItem("theme") === "dark") {
+    document.documentElement.classList.add("dark");
   }
 });
