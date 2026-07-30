@@ -44,9 +44,9 @@
         <div class="panel-header">
           <span class="panel-title">Unicode Input (नेपाली युनिकोड)</span>
           <div class="toolbar">
-            <button class="tool-btn" onclick="changeFontSize(-2)">A-</button>
-            <button class="tool-btn" onclick="changeFontSize(2)">A+</button>
-            <button class="tool-btn" onclick="clearAll()">Clear</button>
+            <button class="tool-btn" type="button" onclick="changeFontSize(-2)">A-</button>
+            <button class="tool-btn" type="button" onclick="changeFontSize(2)">A+</button>
+            <button class="tool-btn" type="button" onclick="clearAll()">Clear</button>
           </div>
         </div>
 
@@ -57,13 +57,20 @@
         </div>
       </div>
 
+      <!-- Convert Action Area -->
+      <div class="action-bar" style="text-align: center; margin: 15px 0;">
+        <button type="button" class="tool-btn tool-btn-primary" onclick="convertNow()" style="padding: 12px 24px; font-weight: 600; font-size: 1rem; cursor: pointer;">
+          Convert to Preeti ➔
+        </button>
+      </div>
+
       <!-- Output Panel -->
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">Preeti Output (प्रिती फन्ट)</span>
           <div class="toolbar">
-            <button class="tool-btn" onclick="copyToClipboard()">Copy Text</button>
-            <button class="tool-btn tool-btn-primary" onclick="downloadTxt()">Download .txt</button>
+            <button class="tool-btn" type="button" onclick="copyToClipboard()">Copy Text</button>
+            <button class="tool-btn tool-btn-primary" type="button" onclick="downloadTxt()">Download .txt</button>
           </div>
         </div>
 
