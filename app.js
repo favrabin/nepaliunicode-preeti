@@ -1,4 +1,4 @@
-// Comprehensive Unicode to Preeti Mapping Dictionary
+// Complete & Accurate Unicode to Preeti Dictionary
 const unicodeToPreetiMap = {
   // Numbers
   '०': '0', '१': '1', '२': '2', '३': '3', '४': '4',
@@ -17,10 +17,19 @@ const unicodeToPreetiMap = {
   'य': 'o', 'र': 'r', 'ल': 'l', 'व': 'j', 'श': 'z',
   'ष': 'Z', 'स': 's', 'ह': 'x',
 
-  // Joint / Compound Characters
-  'क्ष': 'IF', 'त्र': 'q', 'ज्ञ': 'j', 'द्व': 'å', 'द्य': 'B',
+  // Half Consonants (Preeti Specific Half-Letter Keys)
+  'क्': 'S', 'ख्': 'V', 'ग्': 'U', 'घ्': 'ª',
+  'च्': 'R', 'छ्': 'R', 'ज्': 'H', 'झ्': '¥',
+  'त्': 't', 'थ्': 'T', 'द्': 'b', 'ध्': 'B', 'न्': 'n',
+  'प्': 'K', 'फ्': 'K', 'ब्': 'A', 'भ्': 'A', 'म्': 'E',
+  'य्': 'O', 'ल्': 'L', 'व्': 'J', 'श्': 'Z', 'स्': ':', 'ह्': 'X',
 
-  // Matras (Vowel signs attached to consonants)
+  // Special Compounds & Ligatures
+  'क्ष': 'IF', 'क्ष्म': 'IFe', 'त्र': 'q', 'ज्ञ': 'j', 
+  'द्व': 'å', 'द्य': 'B', 'द्ध': '4', 'ष्ट': 'î', 'ष्ठ': 'ï',
+  'श्र': 'z', 'स्र': ':r', 'द्द': 'b',
+
+  // Matras (Vowel Signs)
   'ा': 'f',
   'ी': 'L',
   'ु': '\'',
@@ -34,63 +43,80 @@ const unicodeToPreetiMap = {
   'ः': ':',
   '्': '\\',
 
-  // Symbols
+  // Symbols & Punctuation
   '।': 'P', '॥': 'PP', '?': '?'
 };
 
-// Core Transliteration Engine
+// Professional Transliteration Engine
 function convertUnicodeToPreeti(text) {
   if (!text) return "";
-  
+
   let result = text;
 
-  // Rule 1: Handle Reph (half-R 'र्') preceding consonants -> convert to '{' typed AFTER the letter
+  // Rule 1: Reph (र्) handling - moves Reph symbol '{' after consonant + matra
   result = result.replace(/र्([क-ह])/g, '$1{');
+  result = result.replace(/र्([क-ह])([ािीुूेैोौँं]*)/g, '$1$2{');
 
-  // Rule 2: Handle Short 'i' matra (ि) positioning (moves BEFORE the preceding consonant)
+  // Rule 2: Short 'i' matra (ि) positioning (moves BEFORE consonant or half-consonant cluster)
   result = result.replace(/([क-ह])ि/g, 'i$1');
-  result = result.replace(/([क-ह]\\[क-ह])ि/g, 'i$1'); // Joined consonants + short i
+  result = result.replace(/([क्-ह्][क-ह])ि/g, 'i$1');
 
-  // Rule 3: Map remaining characters
+  // Rule 3: Re-map specific half-letter rules (e.g. स् + त => :t)
+  result = result.replace(/स्/g, ':');
+  result = result.replace(/क्/g, 'S');
+  result = result.replace(/न्/g, 'n');
+  result = result.replace(/म्/g, 'E');
+
   let converted = "";
-  for (let i = 0; i < result.length; i++) {
-    let char = result[i];
-    
-    // Check two-character combinations first (e.g., क्ष, त्र, ज्ञ)
-    if (i < result.length - 1) {
-      let pair = char + result[i + 1];
-      if (unicodeToPreetiMap[pair]) {
-        converted += unicodeToPreetiMap[pair];
-        i++; // skip next char
+  let i = 0;
+
+  while (i < result.length) {
+    // Check 3-character compounds first
+    if (i < result.length - 2) {
+      let trio = result.substring(i, i + 3);
+      if (unicodeToPreetiMap[trio]) {
+        converted += unicodeToPreetiMap[trio];
+        i += 3;
         continue;
       }
     }
 
-    // Single character lookup
+    // Check 2-character compounds
+    if (i < result.length - 1) {
+      let pair = result.substring(i, i + 2);
+      if (unicodeToPreetiMap[pair]) {
+        converted += unicodeToPreetiMap[pair];
+        i += 2;
+        continue;
+      }
+    }
+
+    // Single character match
+    let char = result[i];
     if (unicodeToPreetiMap[char] !== undefined) {
       converted += unicodeToPreetiMap[char];
     } else {
-      converted += char; // Keep original if no match (e.g. space, English text)
+      converted += char;
     }
+    i++;
   }
 
   return converted;
 }
 
-// DOM Event Handlers
+// DOM Setup
 document.addEventListener("DOMContentLoaded", function() {
   const unicodeInput = document.getElementById('unicodeInput');
   const preetiOutput = document.getElementById('preetiOutput');
   const themeToggle = document.getElementById('themeToggle');
-  let currentFontSize = 18;
 
-  // Real-time translation on key input
-  unicodeInput.addEventListener('input', function() {
-    preetiOutput.value = convertUnicodeToPreeti(unicodeInput.value);
-    updateStats();
-  });
+  if (unicodeInput && preetiOutput) {
+    unicodeInput.addEventListener('input', function() {
+      preetiOutput.value = convertUnicodeToPreeti(unicodeInput.value);
+      updateStats();
+    });
+  }
 
-  // Word & Character counter
   window.updateStats = function() {
     const inVal = unicodeInput.value.trim();
     const outVal = preetiOutput.value.trim();
@@ -101,75 +127,39 @@ document.addEventListener("DOMContentLoaded", function() {
       (outVal ? outVal.split(/\s+/).length : 0) + " words | " + preetiOutput.value.length + " chars";
   };
 
-  // Font Resizer
-  window.changeFontSize = function(delta) {
-    currentFontSize = Math.min(Math.max(14, currentFontSize + delta), 32);
-    unicodeInput.style.fontSize = currentFontSize + "px";
-    preetiOutput.style.fontSize = currentFontSize + "px";
-  };
-
-  // Copy to Clipboard
   window.copyToClipboard = function() {
     if (!preetiOutput.value) return;
     navigator.clipboard.writeText(preetiOutput.value).then(function() {
-      showToast("Preeti text copied to clipboard!");
+      showToast("Preeti text copied!");
     });
   };
 
-  // Download .txt with promotional footer
   window.downloadTxt = function() {
-    if (!preetiOutput.value.trim()) {
-      showToast("Nothing to download!");
-      return;
-    }
-
-    const siteUrl = "https://unicode.rabinthapa9.com.np";
-    const header = `====================================================================\n` +
-                   `Converted using Unicode to Preeti Pro — ${siteUrl}\n` +
-                   `====================================================================\n\n`;
-
-    const fileContent = header + preetiOutput.value;
-    const blob = new Blob([fileContent], { type: "text/plain;charset=utf-8" });
-    const downloadLink = document.createElement("a");
-    
-    const dateStamp = new Date().toISOString().split('T')[0];
-    downloadLink.href = URL.createObjectURL(blob);
-    downloadLink.download = `preeti-export-${dateStamp}.txt`;
-    
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-    URL.revokeObjectURL(downloadLink.href);
-
-    showToast("Downloaded .txt file!");
+    if (!preetiOutput.value.trim()) return;
+    const blob = new Blob([preetiOutput.value], { type: "text/plain;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "preeti-converted.txt";
+    link.click();
   };
 
-  // Clear text
   window.clearAll = function() {
     unicodeInput.value = "";
     preetiOutput.value = "";
     updateStats();
-    unicodeInput.focus();
   };
 
-  // Toast feedback
   function showToast(msg) {
     const toast = document.getElementById("toast");
+    if (!toast) return;
     toast.innerText = msg;
     toast.classList.add("show");
-    setTimeout(function() { toast.classList.remove("show"); }, 2500);
+    setTimeout(function() { toast.classList.remove("show"); }, 2000);
   }
 
-  // Dark Mode Toggle
-  themeToggle.addEventListener("click", function() {
-    document.documentElement.classList.toggle("dark");
-    localStorage.setItem("theme", document.documentElement.classList.contains("dark") ? "dark" : "light");
-  });
-
-  if (localStorage.getItem("theme") === "dark" || 
-     (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
-    document.documentElement.classList.add("dark");
-  } else {
-    document.documentElement.classList.remove("dark");
+  if (themeToggle) {
+    themeToggle.addEventListener("click", function() {
+      document.documentElement.classList.toggle("dark");
+    });
   }
 });
