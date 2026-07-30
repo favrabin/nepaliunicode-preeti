@@ -3,31 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unicode to Preeti Converter</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Unicode to Preeti Converter — Himalayan Clarity</title>
+  
+  <!-- Inter & Noto Sans Devanagari Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css?v=1.0.0">
 </head>
 <body>
-  <div class="container">
-    <h1>🔄 Unicode to Preeti Converter</h1>
-    <p class="subtitle">Powerful & Accurate Nepali Unicode ↔ Preeti Tool</p>
 
-    <div class="converter">
-      <div class="box">
-        <h3>Unicode (Modern)</h3>
-        <textarea id="unicode" placeholder="यहाँ Unicode नेपाली टाइप गर्नुहोस्..."></textarea>
-      </div>
-      <div class="box">
-        <h3>Preeti Font</h3>
-        <textarea id="preeti" placeholder="Preeti Output यहाँ आउँछ..."></textarea>
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <span>नेपाली Unicode to Preeti</span>
+        <span class="logo-badge">Pro</span>
+      </a>
+      <div class="nav-actions">
+        <button id="themeToggle" class="theme-btn" type="button">
+          <span class="theme-icon">🌙</span> Theme
+        </button>
       </div>
     </div>
+  </header>
 
-    <div class="buttons">
-      <button id="convertBtn" class="btn primary">Unicode → Preeti</button>
-      <button id="clearBtn" class="btn secondary">Clear All</button>
+  <!-- Main Content -->
+  <main>
+    <div class="page-title">
+      <h1>Unicode to Preeti Converter</h1>
+      <p>Convert modern Devanagari Unicode text to standard Preeti font instantly.</p>
     </div>
-  </div>
 
-  <script src="script.js"></script>
+    <!-- Converter Grid -->
+    <div class="editor-grid">
+      
+      <!-- Input Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Unicode Input (नेपाली युनिकोड)</span>
+          <div class="toolbar">
+            <button class="tool-btn" onclick="changeFontSize(-2)">A-</button>
+            <button class="tool-btn" onclick="changeFontSize(2)">A+</button>
+            <button class="tool-btn" onclick="clearAll()">Clear</button>
+          </div>
+        </div>
+
+        <textarea id="unicodeInput" placeholder="यहाँ युनिकोड वा नेपाली टेक्स्ट टाइप गर्नुहोस्..." autofocus></textarea>
+
+        <div class="panel-footer">
+          <span id="inputStats">0 words | 0 chars</span>
+        </div>
+      </div>
+
+      <!-- Output Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Preeti Output (प्रिती फन्ट)</span>
+          <div class="toolbar">
+            <button class="tool-btn" onclick="copyToClipboard()">Copy Text</button>
+            <button class="tool-btn tool-btn-primary" onclick="downloadTxt()">Download .txt</button>
+          </div>
+        </div>
+
+        <textarea id="preetiOutput" placeholder="Converted Preeti text will appear here..." readonly></textarea>
+
+        <div class="panel-footer">
+          <span id="outputStats">0 words | 0 chars</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Quick Font Warning Notice -->
+    <div class="guide-section">
+      <h2>💡 Preeti Font Requirement</h2>
+      <div class="guide-item">
+        <strong>Notice:</strong> The text in the output box represents ASCII characters designed specifically for the <code>Preeti</code> font. To view or edit it properly in programs like Microsoft Word or PageMaker, highlight the text and select the <code>Preeti</code> font on your computer.
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Unicode to Preeti Converter. Crafted with care.</p>
+  </footer>
+
+  <script src="app.js?v=1.0.0"></script>
 </body>
 </html>
